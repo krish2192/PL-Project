@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>EPL Predictor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        /* Accessible color system (auto switches with system theme) */
+        :root {
+            --bg: #f7f7fb;
+            --fg: #111827;
+            --muted: #6b7280;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --accent: #2563eb;
+            --home: #14b8a6;
+            --draw: #9ca3af;
+            --away: #ef4444;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0f172a;
+                --fg: #e5e7eb;
+                --muted: #9ca3af;
+                --card: #111827;
+                --border: #374151;
+                --accent: #60a5fa;
+            }
+        }
+
+        /* Layout */
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--fg);
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            line-height: 1.45;
+        }
+
+        .wrap {
+            max-width: 860px;
+            margin: 40px auto;
+            padding: 0 16px;
+        }
+
+        h1 {
+            margin: 0 0 6px;
+            font-size: 2.1rem;
+            font-weight: 800
+        }
+
+        p.muted {
+            color: var(--muted);
+            margin: 0 0 18px
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px
+        }
+
+        @media (max-width:700px) {
+            .row {
+                grid-template-columns: 1fr
+            }
+        }
+
+        label {
+            display: block;
+            font-size: .9rem;
+            margin: 10px 0 6px
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--fg);
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent)
+        }
+
+        .btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px
+        }
+
+        button {
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        button.secondary {
+            background: transparent;
+            color: var(--fg);
+            border-color: var(--border);
+        }
+
+        /* Result */
+        .numbers {
+            font-size: 1.1rem;
+            margin-top: 6px
+        }
+
+        .bar {
+            height: 14px;
+            background: var(--border);
+            border-radius: 7px;
+            overflow: hidden;
+            margin-top: 10px
+        }
+
+        .bars {
+            display: grid;
+            height: 14px;
+            grid-template-columns: var(--homeW, 0%) var(--drawW, 0%) var(--awayW, 0%);
+        }
+
+        .home {
+            background: var(--home)
+        }
+
+        .draw {
+            background: var(--draw)
+        }
+
+        .away {
+            background: var(--away)
+        }
+
+        #topClass {
+            margin-top: 8px;
+            font-weight: 700
+        }
+
+        #status {
+            margin-top: 8px
+        }
+
+        .error {
+            color: #b00020
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <h1>EPL Predictor</h1>
+        <p class="muted">Pick teams and a date, then get probabilities for Home / Draw / Away.</p>
+
+        <div class="card">
+            <label for="apiBase">API Base URL</label>
+            <input id="apiBase" placeholder="http://127.0.0.1:8000" />
+
+            <div class="row">
+                <div>
+                    <label for="home">Home Team</label>
+                    <select id="home"></select>
+                </div>
+                <div>
+                    <label for="away">Away Team</label>
+                    <select id="away"></select>
+                </div>
+            </div>
+
+            <label for="matchDate">Date</label>
+            <input id="matchDate" type="date" />
+
+            <div class="btns">
+                <button id="loadTeamsBtn" class="secondary" type="button">Reload Teams</button>
+                <button id="predictBtn" type="button">Predict</button>
+            </div>
+
+            <div id="status" class="muted"></div>
+        </div>
+
+        <div class="card" id="result" style="margin-top:16px; display:none;">
+            <h3>Prediction</h3>
+            <div class="numbers" id="numbers"></div>
+            <div class="bar">
+                <div class="bars">
+                    <div class="home"></div>
+                    <div class="draw"></div>
+                    <div class="away"></div>
+                </div>
+            </div>
+            <p id="topClass"></p>
+        </div>
+    </div>
+
+    <script src="./main.js" defer></script>
+</body>
+
+</html>
